@@ -1,23 +1,12 @@
 # Tracker Workflow Agent
 
-> **AI-agenta for automatic workflow creation in Yandex Tracker**
+> **AI-agent for automatic workflow creation in Yandex Tracker**
 
-This project is a prototype of an intelligent agent that transforms a natural language description of a business process into a fully configured workflow in Yandex Tracker via API.
+This is an OpenCode skill that helps configure business processes in Yandex Tracker by natural language description. The agent transforms informal descriptions into proper Tracker configuration through API calls.
 
 ### Who is it for?
 
 Ideal for **B2B/SaaS solutions**: uses the public host `api.tracker.yandex.net` and OAuth authorization.
-
-## File Structure
-
-| File | Description |
-|------|---------|
-| `tracker_client.py` | Client for Tracker REST API (`/v2/workflows`, `/v3/queues/...`) |
-| `workflow_spec.py` | ProcessSpec conversion and graph validation |
-| `tools.py` | JSON schemas for function-tools + call dispatcher |
-| `system_prompt.py` | Agent system prompt |
-| `function.py` | Entry point: CLI and Cloud Functions handler |
-| `requirements.txt` | Project dependencies |
 
 ## How the Agent Works
 
