@@ -1,133 +1,97 @@
-# Tracker Workflow Agent Skill
+# Tracker Workflow Agent
 
-🚀 **OpenCode skill** для создания и конфигурирования бизнес-процессов в Яндекс Трекере через человеческое описание.
+> **AI-agenta for automatic workflow creation in Yandex Tracker**
 
-## Что это?
+This project is a prototype of an intelligent agent that transforms a natural language description of a business process into a fully configured workflow in Yandex Tracker via API.
 
-Этот скилл превращает простое описание вроде:
+### Who is it for?
 
-> "Создай процесс с статусами: Новая → В работе → Закрыто"
+Ideal for **B2B/SaaS solutions**: uses the public host `api.tracker.yandex.net` and OAuth authorization.
 
-...в полностью настроенный бизнес-процесс в Яндекс Трекере через API вызовы.
+## File Structure
 
-## Быстрый старт
+| File | Description |
+|------|---------|
+| `tracker_client.py` | Client for Tracker REST API (`/v2/workflows`, `/v3/queues/...`) |
+| `workflow_spec.py` | ProcessSpec conversion and graph validation |
+| `tools.py` | JSON schemas for function-tools + call dispatcher |
+| `system_prompt.py` | Agent system prompt |
+| `function.py` | Entry point: CLI and Cloud Functions handler |
+| `requirements.txt` | Project dependencies |
 
-### Установка
+## How the Agent Works
 
-```bash
-# Скопируйте SKILL.md в папку OpenCode
-mkdir -p ~/.config/opencode/skills/tracker-workflow-agent
-cp SKILL.md ~/.config/opencode/skills/tracker-workflow-agent/
+1. **get_queue** - loads existing statuses and task types of the queue
+2. **Specification collection** - forms ProcessSpec from dialog, clarifies missing statuses
+3. **validate_process_spec** - checks graph (connectivity, no duplicates, target statuses)
+4. **Confirmation** - shows the plan to the user and waits for approval
+5. **create_workflow** - creates workflow via API (`POST /v2/workflows`)
+6. **get_workflow** - verifies the result
+7. *(optional)* - configures automations (`create_trigger`, `create_autoaction`)
 
-# Перезагрузите OpenCode
-# Ctrl+C (выход) и запуск заново: opencode
-```
+## Quick Start
 
-### Использование
+### Requirements
+- Python 3.8+
+- Access to Yandex Tracker
+- API keys (see below)
 
-В OpenCode просто опишите процесс:
-
-```
-Создай процесс для поддержки с такими статусами:
-- Новая заявка
-- В работе
-- Закрыто
-
-Переходы:
-- Из "Новая" в "В работе" (кнопка "Взять")
-- Из "В работе" в "Закрыто" (кнопка "Закрыть")
-```
-
-Агент будет:
-1. ✅ Уточнять недостающие детали
-2. ✅ Показывать план действий
-3. ✅ Просить подтверждение
-4. ✅ Создавать процесс через API
-5. ✅ Проверять результат
-
-## Возможности
-
-- 🎯 Создание очередей
-- 📊 Рабочие процессы (статусы + переходы)
-- 📋 Экраны переходов с обязательными полями
-- ⚙️ Условия переходов
-- 🔄 Автоматизация (триггеры, автодействия)
-- 🏷️ Локальные поля
-- 🔗 Компоненты
-
-## Требования
-
-- OpenCode v1.0+
-- Токен доступа к Яндекс Трекеру
-- Интернет
-
-## Примеры
-
-### Простой процесс (3 статуса)
-```
-Новая заявка → В работе → Закрыто
-```
-
-### Сложный процесс (с условиями)
-```
-Черновик → На согласование → На одобрение → Одобрено
-     ↑                              ↓
-     └──────── возврат (отклонено) ─┘
-```
-
-### С автоматизацией
-```
-Новая → В работе (если 4+ часа → эскалировать на Level 2)
-     → Level 2 → Level 3 (назначить lead'у)
-```
-
-## Документация
-
-| Файл | Назначение |
-|------|-----------|
-| **SKILL.md** | Основной файл скилла для OpenCode |
-| PROJECT_STRUCTURE.md | Описание структуры проекта |
-| LICENSE | MIT лицензия |
-
-## Безопасность
-
-✅ **Полностью безопасен для публикации:**
-- Нет реальных токенов или ключей
-- Все примеры используют плейсхолдеры (`<token>`, `<login>`)
-- Явная инструкция: "никогда не раскрывай кредентиалы"
-
-## Использование в проекте
+### Installation
 
 ```bash
-# В корне проекта
-mkdir -p .opencode/skills/tracker-workflow-agent
-cp SKILL.md .opencode/skills/tracker-workflow-agent/
+# Clone the repository
+git clone https://github.com/EvgeniiaBeloglazova/tracker-workflow-agent.git
+cd tracker-workflow-agent
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-Или добавьте как git submodule:
+### Configuration
+
+Set environment variables:
+
 ```bash
-git submodule add https://github.com/your-username/tracker-workflow-agent.git .opencode/skills/tracker-workflow-agent
+export YC_API_KEY=...              # OAuth token for service account (Yandex Cloud)
+export YC_FOLDER_ID=...            # Folder ID in Yandex Cloud
+export TRACKER_TOKEN=...           # OAuth token for Tracker admin
+export TRACKER_ORG_ID=...          # Organization ID in Tracker
+# export TRACKER_CLOUD_ORG=true    # Uncomment for Yandex Cloud organizations
 ```
 
-## Статистика
+### Run
 
-- **Строк кода**: 326 (в SKILL.md)
-- **API endpoint'ов**: 20+ задокументировано
-- **Примеров**: 5+ реальных сценариев
-- **Язык**: Русский + English templates
+```bash
+python function.py
+```
 
-## Поддержка
+## Important Limitations and Risks
 
-- 📖 [Документация OpenCode](https://opencode.ai/docs)
-- 🐛 [報告баги](https://github.com/anomalyco/opencode/issues)
-- 💬 [Вопросы в Discussions](https://github.com/your-username/tracker-workflow-agent/discussions)
+### Access Rights
+Creating/modifying workflows is protected by the `Secured.Role.SUPPORT` role, which means:
+- **Organization administrator**, or
+- **Support group member**
 
-## Лицензия
+**Warning:** The agent token must belong to an organization administrator.
 
-MIT - используйте свободно в личных и коммерческих проектах
+### Undocumented API
+- `/v2/workflows` endpoints are **not publicly documented**
+- Contract may change without notice
+- Contract is verified against Tracker source code (rev. r19858620)
+- **Before production:** coordinate usage with the Tracker team
 
----
+### Architectural Limitations
+- **Stateless handler** - each request creates a new thread
+  - For full-fledged dialogs, save `thread_id` between calls
+- **Model version** - uses `yandexgpt` (rc)
+  - Test function calling quality on real multi-step graphs
 
-**Версия**: 1.0.0  
-**Совместимость**: OpenCode 1.0+  
-**Последнее обновление**: 2026-06-10
+### Components
+Implementation relies on:
+- `WorkflowInputParameters`, `StepInputParameters`, `ActionInputParameters`
+- `WorkflowProto`
+- Reference implementations `DEFAULT_WORKFLOW_DATA` and integration tests
+
+## License
+
+MIT License - see the [LICENSE](LICENSE) file for details.
