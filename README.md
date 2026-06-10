@@ -31,39 +31,12 @@ Ideal for **B2B/SaaS solutions**: uses the public host `api.tracker.yandex.net` 
 
 ## Quick Start
 
-### Requirements
-- Python 3.8+
-- Access to Yandex Tracker
-- API keys (see below)
+This is an OpenCode skill. To use it:
 
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/EvgeniiaBeloglazova/tracker-workflow-agent.git
-cd tracker-workflow-agent
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### Configuration
-
-Set environment variables:
-
-```bash
-export YC_API_KEY=...              # OAuth token for service account (Yandex Cloud)
-export YC_FOLDER_ID=...            # Folder ID in Yandex Cloud
-export TRACKER_TOKEN=...           # OAuth token for Tracker admin
-export TRACKER_ORG_ID=...          # Organization ID in Tracker
-# export TRACKER_CLOUD_ORG=true    # Uncomment for Yandex Cloud organizations
-```
-
-### Run
-
-```bash
-python function.py
-```
+1. Ensure you have OpenCode installed
+2. Add this skill to your OpenCode configuration
+3. Describe your Yandex Tracker workflow in natural language
+4. The agent will configure it automatically via Tracker API
 
 ## Important Limitations and Risks
 
