@@ -1,0 +1,11 @@
+name: Validate Skill
+on: [push, pull_request]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Check SKILL.md exists
+      run: test -f "SKILL.md" && echo "✅ SKILL.md found" || (echo "❌ SKILL.md not found" && exit 1)
+    - name: Validate YAML frontmatter
+      run: grep -q "^name:" SKILL.md && grep -q "^description:" SKILL.md && echo "✅ Frontmatter valid" || exit 1

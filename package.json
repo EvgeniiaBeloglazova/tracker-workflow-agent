@@ -1,0 +1,12 @@
+{
+  "name": "@opencode-ai/skill-tracker-workflow-agent",
+  "version": "1.0.0",
+  "description": "OpenCode skill for creating business processes in Yandex Tracker",
+  "main": "SKILL.md",
+  "keywords": ["opencode", "skill", "tracker", "yandex", "workflow"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/tracker-workflow-agent.git"
+  }
+}
